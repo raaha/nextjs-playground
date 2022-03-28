@@ -1,16 +1,17 @@
-name: Build and Deploy on the homolog server
-
+name: Nextjs CI 
 on:
   push:
     branches: [ main ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         node-version: [16.x]
-        
+
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -19,14 +20,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - name: Install Playwright
+    - name: install playwright
       run: npx playwright install --with-deps
     - name: Run your tests
       run: npm test
-     - name: Upload test results
+    - name: Upload test results
       if: always()
       uses: actions/upload-artifact@v2
       with:
         name: playwright-results
         path: test-results
-
