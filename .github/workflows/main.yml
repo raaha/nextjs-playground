@@ -2,8 +2,7 @@ name: Build and Deploy on the homolog server
 
 on:
   push:
-    tags:
-      - 'homolog-*' # Push events to matching homolog-*, i.e. homolog-1.0
+    branches: [ main ]
 
 jobs:
   build:
@@ -19,5 +18,15 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: yarn install
-    - run: yarn build
+    - run: npm ci
+    - name: Install Playwright
+      run: npx playwright install --with-deps
+    - name: Run your tests
+      run: npm test
+     - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: playwright-results
+        path: test-results
+
